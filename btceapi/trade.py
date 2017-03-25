@@ -7,7 +7,7 @@ import warnings
 from datetime import datetime
 from btceapi import common
 from btceapi import keyhandler
-
+import time
 
 class InvalidNonceException(Exception):
     def __init__(self, method, expectedNonce, actualNonce):
@@ -128,20 +128,21 @@ def setHistoryParams(params, from_number, count_number, from_id, end_id,
 
 
 class TradeAPI(object):
-    def __init__(self, key, handler):
+    def __init__(self, key, secret):
         self.key = key
-        self.handler = handler
+        """self.handler = handler
 
         if not isinstance(self.handler, keyhandler.AbstractKeyHandler):
             raise TypeError("The handler argument must be a"
                             " keyhandler.AbstractKeyHandler, such as"
-                            " keyhandler.KeyHandler")
+                            " keyhandler.KeyHandler")"""
 
         # We depend on the key handler for the secret
-        self.secret = handler.getSecret(key)
+        self.secret = secret
 
     def _post(self, params, connection=None, raiseIfInvalidNonce=False):
-        params["nonce"] = self.handler.getNextNonce(self.key)
+        self.nonce = int(time.time())
+        params["nonce"] = self.nonce
         encoded_params = urllib.parse.urlencode(params)
 
         # Hash the params string to produce the Sign header value
@@ -175,11 +176,12 @@ class TradeAPI(object):
                 expected = int(s[-2].split(":")[1].strip("'"))
                 actual = int(s[-1].split(":")[1].strip("'"))
                 if raiseIfInvalidNonce:
-                    raise InvalidNonceException(method, expected, actual)
+                    """raise InvalidNonceException(method, expected, actual)
 
                 warnings.warn("The nonce in the key file is out of date;"
                               " attempting to correct.")
-                self.handler.setNextNonce(self.key, expected + 1)
+                self.handler.setNextNonce(self.key, expected + 1)"""
+                self.nonce = int(time.time())
                 return self._post(params, connection, True)
             elif "no orders" in err_message and method == "ActiveOrders":
                 # ActiveOrders returns failure if there are no orders;
