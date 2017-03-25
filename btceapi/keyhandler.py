@@ -49,7 +49,7 @@ class AbstractKeyHandler(object):
 
     @property
     def keys(self):
-        return self._keys.keys()
+        return list(self._keys.keys())
 
     def getKeys(self):
         return self.keys
@@ -120,7 +120,7 @@ class KeyHandler(AbstractKeyHandler):
 
     def _save(self):
         with open(self.filename, 'wt') as file:
-            for k, data in self._keys.iteritems():
+            for k, data in self._keys.items():
                 file.write("%s\n%s\n%d\n" % (k, data.secret, data.nonce))
 
     def _parse(self):

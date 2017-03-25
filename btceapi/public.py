@@ -20,7 +20,7 @@ def getTradeFee(pair, connection=None):
     if type(fees) is not dict:
         raise TypeError("The response is not a dict.")
 
-    trade_fee = fees.get(u'trade')
+    trade_fee = fees.get('trade')
     if type(trade_fee) is not decimal.Decimal:
         raise TypeError("The response does not contain a trade fee")
 
@@ -42,7 +42,7 @@ class Ticker(object):
         return dict((k, getattr(self, k)) for k in Ticker.__slots__)
 
     def __setstate__(self, state):
-        for k, v in state.items():
+        for k, v in list(state.items()):
             setattr(self, k, v)
 
 
@@ -58,11 +58,11 @@ def getTicker(pair, connection=None):
 
     if type(response) is not dict:
         raise TypeError("The response is a %r, not a dict." % type(response))
-    elif u'error' in response:
-        print ("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair)) 
+    elif 'error' in response:
+        print(("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair))) 
         ticker = None
     else:
-        ticker = Ticker(**response[u'ticker'])
+        ticker = Ticker(**response['ticker'])
 
     return ticker
 
@@ -80,11 +80,11 @@ def getDepth(pair, connection=None):
     if type(depth) is not dict:
         raise TypeError("The response is not a dict.")
 
-    asks = depth.get(u'asks')
+    asks = depth.get('asks')
     if type(asks) is not list:
         raise TypeError("The response does not contain an asks list.")
 
-    bids = depth.get(u'bids')
+    bids = depth.get('bids')
     if type(bids) is not list:
         raise TypeError("The response does not contain a bids list.")
 
@@ -100,7 +100,7 @@ class Trade(object):
 
         if type(self.date) in (int, float, decimal.Decimal):
             self.date = datetime.datetime.fromtimestamp(self.date)
-        elif type(self.date) in (str, unicode):
+        elif type(self.date) in (str, str):
             if "." in self.date:
                 self.date = datetime.datetime.strptime(self.date,
                                                        "%Y-%m-%d %H:%M:%S.%f")
@@ -112,7 +112,7 @@ class Trade(object):
         return dict((k, getattr(self, k)) for k in Trade.__slots__)
 
     def __setstate__(self, state):
-        for k, v in state.items():
+        for k, v in list(state.items()):
             setattr(self, k, v)
 
 

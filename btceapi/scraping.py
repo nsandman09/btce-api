@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2015 Alan McIntyre
 
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 import datetime
 import warnings
 from btceapi.common import BTCEConnection, all_pairs
@@ -132,7 +132,7 @@ class ScraperResults(object):
         return dict((k, getattr(self, k)) for k in ScraperResults.__slots__)
 
     def __setstate__(self, state):
-        for k, v in state.items():
+        for k, v in list(state.items()):
             setattr(self, k, v)
 
 
